@@ -30,8 +30,8 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator mode="modal" headerMode="none">
-        <Stack.Screen component={AccountScreen} name="Account" />
         <Stack.Screen component={SignInScreen} name="SignIn" />
+        <Stack.Screen component={AccountScreen} name="Account" />
       </Stack.Navigator>
     </NavigationContainer>
   );

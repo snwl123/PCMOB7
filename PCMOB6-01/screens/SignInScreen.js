@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  ActivityIndicator
 } from "react-native";
 import axios from "axios";
 
@@ -19,6 +20,7 @@ export default function SignInScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorText, setErrorText] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function login() {
     console.log("------Login------")
@@ -26,6 +28,8 @@ export default function SignInScreen({ navigation }) {
     
     try
     {
+      setLoading(true)
+      setErrorText("")
       const response = await axios.post(API + API_LOGIN,
       {
         username,
@@ -34,7 +38,8 @@ export default function SignInScreen({ navigation }) {
       console.log("Success logging in!");
       console.log(response);
 
-      AsyncStorage.setItem("token", response.data.access_token);
+      await AsyncStorage.setItem("token", response.data.access_token);
+      setLoading(false)
       navigation.navigate("Account");
     } 
 
@@ -42,7 +47,7 @@ export default function SignInScreen({ navigation }) {
     {
       console.log("Error logging in!");
       console.log(error.response);
-
+      setLoading(false)
       setErrorText(error.response.data.description);
     }
   }
@@ -69,9 +74,12 @@ export default function SignInScreen({ navigation }) {
           value={password}
           onChangeText={(input) => setPassword(input)}
         />
-        <TouchableOpacity onPress={login} style={styles.loginButton}>
-          <Text style={styles.buttonText}>Log in</Text>
-        </TouchableOpacity>
+        <View style={styles.innerContainer}>
+          <TouchableOpacity onPress={login} style={styles.loginButton}>
+            <Text style={styles.buttonText}>Log in</Text>
+          </TouchableOpacity>
+          <Text style={styles.loading}>{loading ? <ActivityIndicator size="small"/> : null }</Text>
+        </View>
         <Text style={styles.errorText}>{errorText}</Text>
       </View>
     </TouchableWithoutFeedback>
@@ -83,6 +91,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 24,
+  },
+  innerContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 12,
+    marginBottom: 36,
+  },
+  loading: {
+    marginLeft: 30
   },
   title: {
     fontSize: 36,
@@ -106,9 +124,7 @@ const styles = StyleSheet.create({
     backgroundColor: "blue",
     width: 120,
     alignItems: "center",
-    padding: 18,
-    marginTop: 12,
-    marginBottom: 36,
+    padding: 18
   },
   buttonText: {
     color: "white",
