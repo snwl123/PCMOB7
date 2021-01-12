@@ -1,38 +1,58 @@
+import { useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 
 const API = "https:/weilin.pythonanywhere.com";
 const API_WHOAMI = "/whoami";
 
-export function useUsername(signOutCallback)
+export function useUsername()
 {
-    async function getUsername() {
-        console.log("---- Getting user name ----");
-        const token = await AsyncStorage.getItem("token");
-        console.log(`Token is ${token}`);
-        try {
-        const response = await axios.get(API + API_WHOAMI, {
-            headers: { Authorization: `JWT ${token}` },
-        });
-        console.log("Got user name!");
-        return (response.data.username);
-        } catch (error)
-        {
-            console.log("Error getting user name");
-            if (error.response)
+    const [username, setUsername] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [refresh, setRefresh] = useState(false);
+
+
+    useEffect(() =>
+    {
+        ( async() => {
+            setLoading(true);
+            const token = await AsyncStorage.getItem("token");
+            console.log(token);
+            if (token == null)
             {
-                console.log(error.response.data);
-                if (error.response.data === 401)
-                {
-                    signOutCallback();
-                }
-            } 
+                setError(true);
+                setUsername(null);
+            }
+
             else
             {
-                console.log(error);
-            }
-        }
-    }
+                try
+                {
+                    const response = await axios.get(API + API_WHOAMI,
+                    {
+                        headers: { Authorization: `JWT ${token}` },
+                    });
 
-        return getUsername;
-    }
+                    setUsername(response.data.username);
+                    setLoading(false);
+
+                }
+                
+                catch (error)
+                {
+                    setUsername(null);
+                    setError(true);
+                    setLoading(false);
+                }
+            }
+        })();
+
+        setRefresh(false);
+
+    },[refresh]);
+
+    return [username, loading, error, setRefresh];
+
+}
