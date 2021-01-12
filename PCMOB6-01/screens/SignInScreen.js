@@ -16,7 +16,8 @@ import axios from "axios";
 const API = "https://weilin.pythonanywhere.com";
 const API_LOGIN = "/auth";
 
-export default function SignInScreen({ navigation }) {
+export default function SignInScreen({ navigation })
+{
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorText, setErrorText] = useState("");
@@ -80,6 +81,12 @@ export default function SignInScreen({ navigation }) {
           </TouchableOpacity>
           <Text style={styles.loading}>{loading ? <ActivityIndicator size="small"/> : null }</Text>
         </View>
+        <View style={styles.innerContainer2}>
+          <Text style={styles.registerText}>Need an account?</Text>
+          <TouchableOpacity onPress={ () => {navigation.navigate("SignUp")} } style={styles.registerButton}>
+            <Text style={styles.registerButtonText}>Sign up.</Text>
+          </TouchableOpacity> 
+        </View>
         <Text style={styles.errorText}>{errorText}</Text>
       </View>
     </TouchableWithoutFeedback>
@@ -92,6 +99,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 24,
   },
+
   innerContainer: {
     display: "flex",
     flexDirection: "row",
@@ -99,18 +107,22 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 36,
   },
+
   loading: {
     marginLeft: 30
   },
+
   title: {
     fontSize: 36,
     fontWeight: "bold",
     marginBottom: 24,
   },
+
   fieldTitle: {
     fontSize: 18,
     marginBottom: 12,
   },
+
   input: {
     borderColor: "#999",
     borderWidth: 1,
@@ -120,17 +132,39 @@ const styles = StyleSheet.create({
     fontSize: 18,
     backgroundColor: "white",
   },
+
   loginButton: {
     backgroundColor: "blue",
     width: 120,
     alignItems: "center",
     padding: 18
   },
+
   buttonText: {
     color: "white",
     fontWeight: "bold",
     fontSize: 18,
   },
+
+  innerContainer2: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 36
+  },
+
+  registerText: {
+  textAlign: "left"
+  },
+
+  registerButton: {
+    marginLeft: 5
+  },
+
+  registerButtonText: {
+    color: "blue"
+  },
+
   errorText: {
     color: "red",
     height: 40,
