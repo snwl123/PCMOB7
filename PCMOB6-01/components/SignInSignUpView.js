@@ -23,7 +23,7 @@ export default function SignInSignUpView({ navigation, isSignUp })
     username,
     password,
     confirmPassword,
-    () => {navigation.navigate("Account")} // function to be run on successful login
+    () => {navigation.navigate("loggedIn"), {screen: 'Account'}} // function to be run on successful login
   );
 
   return (
