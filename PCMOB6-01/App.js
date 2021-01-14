@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import AccountScreen from "./screens/AccountScreen";
@@ -16,6 +16,7 @@ export default function App() {
   const [signedIn,setSignedIn] = useState(false);
 
   async function loadToken() {
+
     const token = await AsyncStorage.getItem("token");
     if (token){
       setSignedIn(true);
@@ -30,10 +31,10 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator mode="modal" headerMode="none">
+      <Stack.Navigator mode="modal" headerMode="none" initialRouteName={signedIn ? "Account" : "SignIn"}>
         <Stack.Screen component={SignInScreen} name="SignIn" />
-        <Stack.Screen component={AccountScreen} name="Account" />
         <Stack.Screen component={SignUpScreen} name="SignUp" />
+        <Stack.Screen component={AccountScreen} name="Account" />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function AccountScreen({ navigation })
 {
     const [username, loading, error, refresh] = useUsername();
+    
 
     // signs out if the useUsername hook returns error as true
     useEffect(() =>
