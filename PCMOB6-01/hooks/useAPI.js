@@ -7,7 +7,7 @@ const API = "https://weilin.pythonanywhere.com";
 const API_SIGNUP = "/newuser";
 const API_LOGIN = "/auth";
 
-export function useAuth({ username, password, confirmPassword, navigationCallback })
+export function useAuth( username, password, confirmPassword, navigationCallback )
 {
     const [errorText, setErrorText] = useState("");
     const [loading, setLoading] = useState(false);
@@ -87,8 +87,12 @@ export function useAuth({ username, password, confirmPassword, navigationCallbac
         catch (error)
         {
         console.log("Login Error!");
-        console.log(error.response);
-        setErrorText(error.response.data.description);
+        console.log(error);
+            if (error.response)
+            {
+                console.log(error.response);
+                setErrorText(error.response.data.description);
+            }
         }
 
         finally

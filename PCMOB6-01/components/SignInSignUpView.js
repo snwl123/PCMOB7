@@ -12,10 +12,6 @@ import {
 } from "react-native";
 import { useAuth } from "../hooks/useAPI"
 
-const API = "https://weilin.pythonanywhere.com";
-const API_SIGNUP = "/newuser";
-const API_LOGIN = "/auth";
-
 export default function SignInSignUpView({ navigation, isSignUp })
 {
   const [username, setUsername] = useState("");

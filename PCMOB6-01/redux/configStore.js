@@ -8,4 +8,6 @@ const reducer = combineReducers
     auth: blogAuthReducer,
 })
 
+const store = createStore(reducer);
+
 export default store;
