@@ -8,28 +8,40 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Provider, useDispatch, useSelector } from "react-redux";
+import store from "./redux/configStore";
+import { signInAction } from "./redux/ducks/blogAuth";
 
 const Stack = createStackNavigator();
 
+export default function AppWrapper() {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+}
 
-export default function App() {
+function App()
+{
 
   const [loading,setLoading] = useState(false);
-  const [signedIn,setSignedIn] = useState(false);
+  const dispatch = useDispatch();
+  const signedIn = useSelector((state) => state.auth.signedIn); // before: [] = useState()
 
   async function loadToken() {
 
     const token = await AsyncStorage.getItem("token");
     if (token){
-      setSignedIn(true);
+      dispatch(signInAction()); // before: setSignIn(true)
     }
     setLoading(false);
   }
 
   useEffect(() =>
-    {
-      loadToken();
-    }, []);
+  {
+    loadToken();
+  }, []);
 
   const Tab = createBottomTabNavigator();
 

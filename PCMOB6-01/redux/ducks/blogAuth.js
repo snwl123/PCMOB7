@@ -1,5 +1,3 @@
-import { ActionSheetIOS } from "react-native";
-
 const SIGN_IN = "sign_in"
 const SIGN_OUT = "sign_out"
 

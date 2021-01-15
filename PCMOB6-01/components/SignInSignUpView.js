@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import {
   View,
   Text,
@@ -11,20 +11,35 @@ import {
   Keyboard
 } from "react-native";
 import { useAuth } from "../hooks/useAPI"
+import { useDispatch } from "react-redux"
+import { signInAction } from "../redux/ducks/blogAuth"
 
 export default function SignInSignUpView({ navigation, isSignUp })
 {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const dispatch = useDispatch();
 
   const [login, signup, loading, errorText] = useAuth
   (
     username,
     password,
     confirmPassword,
-    () => {navigation.navigate("loggedIn"), {screen: 'Account'}} // function to be run on successful login
+    () =>
+        {
+            dispatch(signInAction());
+        } // function to be run on successful login
   );
+
+  useEffect(() =>
+  {
+        navigation.addListener('blur', () =>
+        {
+            setUsername("");
+            setPassword("")
+        })
+  })
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
