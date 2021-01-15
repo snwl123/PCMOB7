@@ -1,6 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
+import { stylesDark } from "../styles/stylesDark";
+import { stylesLight } from "../styles/stylesLight";
 import { useSelector } from "react-redux"
 
 export default function CreateScreen({ navigation }) {
