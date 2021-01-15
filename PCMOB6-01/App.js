@@ -58,7 +58,7 @@ function App()
 
   return (
     <NavigationContainer>
-      <Stack.Navigator mode="modal" headerMode="none" initialRouteName={signedIn ? "Account" : "SignIn"}>
+      <Stack.Navigator mode="modal" headerMode="none" initialRouteName={signedIn ? "loggedIn" : "SignIn"}>
         <Stack.Screen component={loggedIn} name="loggedIn" />
         <Stack.Screen component={SignInScreen} name="SignIn" />
         <Stack.Screen component={SignUpScreen} name="SignUp" />
