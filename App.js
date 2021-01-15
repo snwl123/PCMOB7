@@ -85,10 +85,39 @@ function App()
     }, [navigation]);
 
     return (
-        <Tab.Navigator>
+        <Tab.Navigator screenOptions = {({ route }) => ({
+                                                         tabBarIcon: ({ focused, color, size }) =>
+                                                         {
+                                                            let iconName;
+                                                            if (route.name === 'Blog')
+                                                            {
+                                                                iconName = 'ios-list';
+                                                            }
+                                                            else if (route.name === 'Profile')
+                                                            {
+                                                              iconName = focused ? 'person' : 'person-outline';
+                                                              size = 20;
+                                                            }
+                                                            else if (route.name === 'Create post')
+                                                            {
+                                                              iconName = "add-outline";
+                                                            }
+
+                                                            return <Ionicons name={iconName} size={size} color={color} />;
+                                                         },
+                                                       })}
+
+                        tabBarOptions = {{
+                                          activeTintColor: '#4287f5',
+                                          inactiveTintColor: 'gray',
+                                          labelStyle: {
+                                            fontSize: 10,
+                                            fontWeight: "600",
+                                          },
+                                        }}>
             <Tab.Screen component={IndexScreen} name="Blog"/>
             <Tab.Screen component={ProfileScreen} name="Profile" />
-            <Tab.Screen component={CreateScreen} name="Create" />
+            <Tab.Screen component={CreateScreen} name="Create post" />
         </Tab.Navigator>
     );
 
