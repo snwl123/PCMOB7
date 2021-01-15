@@ -8,4 +8,5 @@ export const commonStyles = {
     alignItems: "center",
     justifyContent: "center",
   },
+
 };

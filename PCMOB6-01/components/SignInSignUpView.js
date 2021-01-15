@@ -34,11 +34,13 @@ export default function SignInSignUpView({ navigation, isSignUp })
 
   useEffect(() =>
   {
-        navigation.addListener('blur', () =>
+        const unsubscribe = navigation.addListener('blur', () =>
         {
             setUsername("");
             setPassword("")
-        })
+        },[])
+
+        return unsubscribe;
   })
 
   return (
