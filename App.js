@@ -2,7 +2,7 @@ import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { TouchableOpacity } from "react-native";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
-import AccountScreen from "./screens/AccountScreen";
+import ProfileScreen from "./screens/ProfileScreen";
 import IndexScreen from "./screens/IndexScreen";
 import CreateScreen from "./screens/CreateScreen";
 import { NavigationContainer } from "@react-navigation/native";
@@ -87,7 +87,7 @@ function App()
     return (
         <Tab.Navigator>
             <Tab.Screen component={IndexScreen} name="Blog"/>
-            <Tab.Screen component={AccountScreen} name="Account" />
+            <Tab.Screen component={ProfileScreen} name="Profile" />
             <Tab.Screen component={CreateScreen} name="Create" />
         </Tab.Navigator>
     );

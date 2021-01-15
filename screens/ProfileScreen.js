@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { signOutAction } from "../redux/ducks/blogAuth"
 import { toggleDarkMode } from "../redux/ducks/userPref"
 
-export default function AccountScreen({ navigation })
+export default function ProfileScreen({ navigation })
 {
     const [username, loading, error, refresh] = useUsername();
     const dispatch = useDispatch();
@@ -47,7 +47,7 @@ export default function AccountScreen({ navigation })
       <View style={[commonStyles.container,
         darkLightMode && { backgroundColor: "#333", color: "#eee" },
       ]}>
-        <Text style = {darkLightMode ? stylesDark.text : stylesLight.text}>Account Screen</Text>
+        <Text style = {darkLightMode ? stylesDark.text : stylesLight.text}>Profile</Text>
         {loading ? <ActivityIndicator /> : <Text style = {darkLightMode ? stylesDark.text : stylesLight.text} >{username}</Text>}
         <Switch style = {styles.toggle}
           trackColor={{ false: "#767577", true: "#81b0ff" }}
