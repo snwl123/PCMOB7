@@ -85,7 +85,7 @@ function App()
         return (
                   () =>
                         (
-                          <TouchableOpacity onPress = {() => navigate("Create Events")}>
+                          <TouchableOpacity onPress = {() => navigate("Create Event")}>
                             <Ionicons
                               name="add-outline"
                               size={25}
@@ -102,15 +102,15 @@ function App()
     }
   }
 
-  function UpcomingScreenStack()
-  {
-    return (
-      <Stack.Navigator mode="modal" >
-        <Stack.Screen component={UpcomingScreen} name = "Upcoming Events"/>
-        <Stack.Screen component={CreateScreen} name = "Create Events"/>
-      </Stack.Navigator>
-    );
-  }
+  // function UpcomingScreenStack()
+  // {
+  //   return (
+  //     <Stack.Navigator mode="modal" >
+  //       <Stack.Screen component={UpcomingScreen} name = "Upcoming Events"/>
+  //       <Stack.Screen component={CreateScreen} name = "Create Events"/>
+  //     </Stack.Navigator>
+  //   );
+  // }
 
 
   
@@ -152,7 +152,7 @@ function App()
                                           },
                                         }}>
             <Tab.Screen component={CurrentScreen} name="Current"/>
-            <Tab.Screen component={UpcomingScreenStack} name="Upcoming" options={{unmountOnBlur: true, headerTitle: ({route}) => { getFocusedRouteNameFromRoute(route)} }}/>
+            <Tab.Screen component={UpcomingScreen} name="Upcoming"/>
             <Tab.Screen component={PastScreen} name="Past" />
             <Tab.Screen component={ProfileScreen} name="Profile"/>
         </Tab.Navigator>
@@ -168,10 +168,9 @@ function App()
         {signedIn ?
         (
           <Stack.Navigator mode="modal">
-            {/* <Stack.Screen component={loggedIn} name="loggedIn" options={({route}) => ({ headerTitle: getFocusedRouteNameFromRoute(route) ?? "Blog" })}/> */}
-       
             <Stack.Screen component={loggedIn} name="Current Events" options={({route, navigation}) => ({ headerTitle: getHeaderTitle(route),
                                                                                                           headerRight: getRightHeaderButton(route, navigation)})}/>
+            <Stack.Screen component={CreateScreen} name="Create Event"/>
           </Stack.Navigator>
         )
         :
