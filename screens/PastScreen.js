@@ -2,10 +2,10 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
 
-export default function ShowScreen({ navigation }) {
+export default function PastScreen({ navigation }) {
   return (
     <View style={commonStyles.container}>
-      <Text>Show Screen</Text>
+      <Text>Past Events</Text>
     </View>
   );
 }
