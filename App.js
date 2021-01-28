@@ -3,22 +3,20 @@ import { TouchableOpacity } from "react-native";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import CreateScreen from "./screens/CreateScreen";
 // import IndexScreen from "./screens/IndexScreen";
 import UpcomingScreen from "./screens/UpcomingScreen";
 import CurrentScreen from "./screens/CurrentScreen";
 import PastScreen from "./screens/PastScreen";
-import CreateScreen from "./screens/CreateScreen";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createDrawerNavigator, DrawerActions} from '@react-navigation/drawer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "./redux/configStore";
-import { signInAction, signOutAction } from "./redux/ducks/blogAuth";
+import { signInAction } from "./redux/ducks/blogAuth";
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons'; 
-import IndexScreen from './screens/IndexScreen';
 
 const Stack = createStackNavigator();
 
@@ -71,77 +69,54 @@ function App()
         return 'Current Events';
       case 'Past':
         return 'Past Events';
-      case 'Settings':
-        return 'Settings';
+      case 'Profile':
+        return 'Profile';
     }
   }
 
-
-  
-  //sign out
-  function signOut()
+  function getRightHeaderButton(route, navigation)
   {
-    AsyncStorage.removeItem("token");
-    (() => { dispatch(signOutAction()); })();
+    const routeName = getFocusedRouteNameFromRoute(route);
+    const navigate = navigation.navigate;
+
+    switch (routeName)
+    {
+      case 'Upcoming':
+        return (
+                  () =>
+                        (
+                          <TouchableOpacity onPress = {() => navigate("Create Events")}>
+                            <Ionicons
+                              name="add-outline"
+                              size={25}
+                              style={{
+                                      color: "#222",
+                                      marginRight: 20,
+                                    }}
+                            />
+                          </TouchableOpacity>
+                        )
+                  )
+
+
+    }
   }
-  
 
-  const Drawer = createDrawerNavigator();
-
-  function Settings() {
+  function UpcomingScreenStack()
+  {
     return (
-      <Drawer.Navigator
-        drawerPosition = "right"
-        drawerType="front">
-        {/* <Drawer.Screen name="Loggedin" component = {loggedIn} options={({route}) => ({ headerTitle: getHeaderTitle(route) })}/> */}
-        <Drawer.Screen name="Profile" component = {ProfileScreen} />
-        <Drawer.Screen name="Logout" component = {ProfileScreen}/>
-      </Drawer.Navigator>
+      <Stack.Navigator mode="modal" >
+        <Stack.Screen component={UpcomingScreen} name = "Upcoming Events"/>
+        <Stack.Screen component={CreateScreen} name = "Create Events"/>
+      </Stack.Navigator>
     );
   }
 
-  function hahaSettings() {
-    return (
-      <Drawer.Navigator
-        drawerPosition = "right"
-        drawerType="front">
-        {/* <Drawer.Screen name="Loggedin" component = {loggedIn} options={({route}) => ({ headerTitle: getHeaderTitle(route) })}/> */}
-        <Drawer.Screen name="Profile" component = {ProfileScreen} />
-        <Drawer.Screen name="Logout" component = {ProfileScreen}/>
-      </Drawer.Navigator>
-    );
-  }
-
-  function callSettings()
-  {
-    return null
-  }
 
   
   //logged in screens
-  function loggedIn({ navigation })
+  function loggedIn()
   {
-    useLayoutEffect(() =>
-    {
-      navigation.setOptions
-      ({  
-        headerRight: () =>
-        (
-          <TouchableOpacity onPress = {signOut}>
-            <Ionicons
-              name="log-out-outline"
-              size={25}
-              style={{
-                      color: "#222",
-                      marginRight: 20,
-                    }}
-            />
-          </TouchableOpacity>
-        )
-      });
-    }, [navigation]);
-    
-
     return (
         <Tab.Navigator screenOptions = {({ route }) => ({
                                                          tabBarIcon: ({ focused, color, size }) =>
@@ -149,24 +124,19 @@ function App()
                                                             let iconName;
                                                             if (route.name === 'Current')
                                                             {
-                                                              iconName = "flash-outline";
+                                                              iconName = focused ? 'flash' : "flash-outline";
                                                             }
                                                             else if (route.name === 'Upcoming')
                                                             {
-                                                                iconName = focused ? 'calendar-outline' : 'calendar';
+                                                                iconName = focused ? 'calendar' : 'calendar-outline';
                                                             }
                                                             else if (route.name === 'Past')
                                                             {
-                                                              iconName = "alarm-outline";
-                                                            }
-                                                            else if (route.name === 'Settings')
-                                                            {
-                                                              iconName = "ios-list";
+                                                              iconName =  focused ? 'alarm' : "alarm-outline";
                                                             }
                                                             else if (route.name === 'Profile')
                                                             {
-                                                              iconName = focused ? 'person' : 'person-outline';
-                                                              size = 20;
+                                                              iconName = focused? "person" : "person-outline";
                                                             }
 
                                                             return <Ionicons name={iconName} size={size} color={color} />;
@@ -182,9 +152,9 @@ function App()
                                           },
                                         }}>
             <Tab.Screen component={CurrentScreen} name="Current"/>
-            <Tab.Screen component={UpcomingScreen} name="Upcoming"/>
+            <Tab.Screen component={UpcomingScreenStack} name="Upcoming" options={{unmountOnBlur: true, headerTitle: ({route}) => { getFocusedRouteNameFromRoute(route)} }}/>
             <Tab.Screen component={PastScreen} name="Past" />
-            <Tab.Screen component={callSettings} name="Settings" defaultNavigationOptions={{tabBarOnPress: () => (<Settings />)}}/>
+            <Tab.Screen component={ProfileScreen} name="Profile"/>
         </Tab.Navigator>
     );
 
@@ -200,7 +170,8 @@ function App()
           <Stack.Navigator mode="modal">
             {/* <Stack.Screen component={loggedIn} name="loggedIn" options={({route}) => ({ headerTitle: getFocusedRouteNameFromRoute(route) ?? "Blog" })}/> */}
        
-            <Stack.Screen component={loggedIn} name="Current Events" options={({route}) => ({ headerTitle: getHeaderTitle(route) })}/>
+            <Stack.Screen component={loggedIn} name="Current Events" options={({route, navigation}) => ({ headerTitle: getHeaderTitle(route),
+                                                                                                          headerRight: getRightHeaderButton(route, navigation)})}/>
           </Stack.Navigator>
         )
         :

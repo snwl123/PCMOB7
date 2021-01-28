@@ -5,7 +5,7 @@ import { stylesDark } from "../styles/stylesDark";
 import { stylesLight } from "../styles/stylesLight";
 import { useSelector } from "react-redux"
 
-export default function CreateScreen({ navigation }) {
+export default function CreateScreen() {
 
   const darkLightMode = useSelector((state) => state.pref.darkMode); 
   const [title, setTitle] = useState("");
