@@ -1,11 +1,11 @@
-import React, { useState} from "react";
+import React, { useState, useRef} from "react";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
 import { stylesDark } from "../styles/stylesDark";
 import { stylesLight } from "../styles/stylesLight";
 import { useSelector } from "react-redux";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { format } from 'date-fns'
+import { format, compareAsc } from 'date-fns'
 
 export default function CreateScreen() {
 
@@ -19,7 +19,11 @@ export default function CreateScreen() {
   const [datePickerVisibility, setDatePickerVisibility] = useState(false); 
   const [timePickerVisibility, setTimePickerVisibility] = useState(false); 
 
-  // const [error, setError] = useState(false); 
+  const [error, setError] = useState(""); 
+
+  const dateInputRef = useRef();
+  const startTimeInputRef = useRef();
+  const endTimeInputRef = useRef();
 
   function setNewEventDate(date)
   {
@@ -27,52 +31,54 @@ export default function CreateScreen() {
     setDatePickerVisibility(false);
   }
 
+  function setNewEventTiming(time)
+  { 
+    setError(null);
+
+    if (timeMode == "startTime")
+    {
+      if (timeEnd != "" && compareAsc(timeEnd, time) == -1)
+      {
+        setError("The start time cannot be later than the end time!");
+        startTimeInputRef.current.clear();
+      }
+      else
+      {
+        setTimeStart(time)
+      }
+    }
+    else
+    {
+      if (timeStart != "" && compareAsc(time, timeStart) == -1)
+      {
+        setError("The end time cannot be later than the start time!");
+        endTimeInputRef.current.clear();
+
+      }
+      else
+      {
+        setTimeEnd(time)
+      }
+    }
+
+    setTimePickerVisibility(false);
+
+  }
+
   // function setNewEventTiming(time)
   // {
 
   //   if (timeMode == "startTime")
   //   {
-  //     let startTime = format(time, 'hh:mma');
-  //     if (timeEnd != "" && compareAsc(timeEnd, time) == -1)
-  //     {
-  //       setError("Invalid start timing!")
-  //       console.log(error);
-  //     }
-  //     else
-  //     {
-  //       setTimeStart(time)
-  //     }
+  //     setTimeStart(time)
   //   }
   //   else
   //   {
-  //     if (timeStart != "" && compareAsc(time, timeStart) == -1)
-  //     {
-  //       setError("Invalid end timing!")
-  //       console.log(error);
-  //     }
-  //     else
-  //     {
-  //       setTimeEnd(time)
-  //     }
+  //     setTimeEnd(time)
   //   }
 
+  //   setTimePickerVisibility(false);
   // }
-
-  function setNewEventTiming(time)
-  {
-
-    if (timeMode == "startTime")
-    {
-      setTimeStart(time)
-      console.log(timeStart)
-    }
-    else
-    {
-      setTimeEnd(time)
-    }
-
-    setTimePickerVisibility(false);
-  }
 
 
   return (
@@ -95,6 +101,7 @@ export default function CreateScreen() {
         <View style = {styles.innerContainer}>
           <Text style = {[styles.text, darkLightMode ? stylesDark.text : stylesLight.text]}>Date</Text>
           <TextInput
+                ref = { dateInputRef }
                 style = {[styles.input,darkLightMode ? stylesDark.input : stylesLight.input]}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -115,6 +122,7 @@ export default function CreateScreen() {
         <View style = {styles.innerContainer}>
           <Text style = {[styles.text, darkLightMode ? stylesDark.text : stylesLight.text]}>Start Time</Text>
           <TextInput
+                ref = { startTimeInputRef }
                 style = {[styles.input,darkLightMode ? stylesDark.input : stylesLight.input]}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -134,6 +142,7 @@ export default function CreateScreen() {
         <View style = {styles.innerContainer}>
           <Text style = {[styles.text, darkLightMode ? stylesDark.text : stylesLight.text]}>End Time</Text>
           <TextInput
+                ref = { endTimeInputRef }
                 style = {[styles.input,darkLightMode ? stylesDark.input : stylesLight.input]}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -155,7 +164,11 @@ export default function CreateScreen() {
                         <Text style={styles.createButtonText}>Create New Event</Text>
           </TouchableOpacity> 
         </View>
+
+        <Text style = {styles.errorText}>{error? error: null}</Text>
+
       </View>
+
 
     </TouchableWithoutFeedback>
   );
@@ -205,5 +218,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     fontWeight: "600"
+  },
+
+  errorText:
+  {
+    fontSize: 12,
+    fontWeight: "600",
+    width: 250,
+    marginTop: 35,
+    color: "#872929"
   },
 });
