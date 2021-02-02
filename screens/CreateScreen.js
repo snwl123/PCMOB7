@@ -44,6 +44,7 @@ export default function CreateScreen() {
       }
       else
       {
+        console.log((time.toISOString()).replace("T", " "));
         setTimeStart(time)
       }
     }
@@ -57,6 +58,7 @@ export default function CreateScreen() {
       }
       else
       {
+        console.log((time.toISOString()).replace("T", " "));
         setTimeEnd(time)
       }
     }
@@ -64,22 +66,6 @@ export default function CreateScreen() {
     setTimePickerVisibility(false);
 
   }
-
-  // function setNewEventTiming(time)
-  // {
-
-  //   if (timeMode == "startTime")
-  //   {
-  //     setTimeStart(time)
-  //   }
-  //   else
-  //   {
-  //     setTimeEnd(time)
-  //   }
-
-  //   setTimePickerVisibility(false);
-  // }
-
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
