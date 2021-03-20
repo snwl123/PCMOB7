@@ -81,6 +81,7 @@ export function useAuth( username, password, confirmPassword, navigationCallback
         console.log(response);
 
         await AsyncStorage.setItem("token", response.data.access_token);
+        console.log(response.data.access_token)
         navigationCallback();
         } 
 

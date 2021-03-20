@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { StyleSheet, Text, View, TouchableWithoutFeedback, TextInput, TouchableOpacity, Keyboard } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
 import { stylesDark } from "../styles/stylesDark";
 import { stylesLight } from "../styles/stylesLight";
@@ -9,41 +9,100 @@ import { format, compareAsc } from 'date-fns';
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function CreateScreen({navigation, route}) {
 
-  const API = "https:/weilin.pythonanywhere.com";
-  const API_EVENTS = "/events";
+export default function GuestInfoScreen({navigation, route}) {
 
-  const darkLightMode = useSelector((state) => state.pref.darkMode); 
-
-  const [eventStatus, setEventStatus] = useState("Create New Event")
-
-  const [eventName, setEventName] = useState(null);
-  const [eventDate, setEventDate] = useState(null); 
-  const [timeStart, setTimeStart] = useState(null); 
-  const [timeEnd, setTimeEnd] = useState(null); 
+  const [guestName, setGuestName] = useState("");
+  const [noOfGuests, setNoOfGuests] = useState("");
+  const [timeStart, setTimeStart] = useState(null);
+  const [timeEnd, setTimeEnd] = useState(null);
   const [timeMode, setTimeMode] = useState(null); 
 
-  const [datePickerVisibility, setDatePickerVisibility] = useState(false); 
+  const [guestStatus, setGuestStatus] = useState("Create New Guest"); 
+
   const [timePickerVisibility, setTimePickerVisibility] = useState(false); 
 
   const [error, setError] = useState(""); 
 
-  const dateInputRef = useRef();
   const startTimeInputRef = useRef();
   const endTimeInputRef = useRef();
 
-  useEffect(() => {
-    if (route.params?.eventId) {
-      navigation.setOptions ({ title: 'Edit Event' })
-      setEventStatus("Edit Existing Event")
-    }
-  })
+  const darkLightMode = useSelector((state) => state.pref.darkMode); 
 
-  function setNewEventDate(date)
-  {
-    setEventDate(date);
-    setDatePickerVisibility(false);
+  const API = "https:/weilin.pythonanywhere.com";
+  const API_EVENTS = "/events";
+  const API_GUESTS = "/guests";
+
+  useEffect(() => {
+    if (route.params?.guestId) {
+      navigation.setOptions ({ title: 'Edit Existing Guest' })
+      setGuestStatus('Edit Existing Guest')
+    }
+  },[])
+
+  async function addNew(navigation, route) { 
+
+    const token = await AsyncStorage.getItem("token");
+    try {
+      const data = {
+        event_id: route.params.eventId,
+        guest_name: guestName,
+        no_of_people: noOfGuests,
+        guest_start_time: timeStart.toISOString(),
+        guest_end_time: timeEnd.toISOString()
+      };
+      
+      const options = {
+        headers: { Authorization: `JWT ${token}` }
+      };
+
+      const response = await axios.post(API + API_EVENTS + "/" + route.params.eventId.toString() + API_GUESTS, data, options);
+
+      console.log(response)
+
+      navigation.goBack()
+
+    }
+    
+    catch (error) {
+        console.log(error)
+    }
+  }
+
+  async function editExisting(navigation, route) {
+
+    const token = await AsyncStorage.getItem("token");
+    try {
+        const data = {};
+
+        if (guestName) {
+          data["guest_name"] = guestName
+        }
+
+        if (noOfGuests) {
+          data["no_of_people"] = noOfGuests
+        }
+
+        if (timeStart) {
+          data["guest_start_time"] = timeStart.toISOString()
+        }
+
+        if (timeEnd) {
+          data["guest_end_time"] = timeEnd.toISOString()
+        }
+        
+        const options = {
+          headers: { Authorization: `JWT ${token}` }
+        };
+
+        await axios.put(API + API_EVENTS + "/" + route.params.eventId.toString() + API_GUESTS + "/" + route.params.guestId.toString(), data, options);
+
+        navigation.goBack()
+    }
+    
+    catch (error) {
+        console.log(error)
+    }
   }
 
   function setNewEventTiming(time)
@@ -79,119 +138,36 @@ export default function CreateScreen({navigation, route}) {
     setTimePickerVisibility(false);
 
   }
-
-  async function addNew(navigation) {
-    
-    const token = await AsyncStorage.getItem("token");
-    try {
-      const data = {
-        "event_name": eventName,
-        "event_date": eventDate.toISOString(),
-        "event_start_time": eventDate.toISOString().slice(0,11) + timeStart.toISOString().slice(12),
-        "event_end_time": eventDate.toISOString().slice(0,11) + timeEnd.toISOString().slice(12)
-      };
-    
-      const options = {
-        headers: { Authorization: `JWT ${token}` }
-      };
-
-      await axios.post(API + API_EVENTS, data, options);
-      navigation.goBack()
-    }
-
-    catch (error)  {
-        console.log(error)
-    }
-  }
-
-  async function editExisting(navigation) {
-
-    const token = await AsyncStorage.getItem("token");
-    try {
-        const data = {};
-
-        if (eventName) {
-          data["event_name"] = eventName
-        }
-
-        if (eventDate) {
-          data["event_date"] = eventDate.toISOString()
-        }
-
-        if (timeStart) {
-          if (eventDate !== null) {
-            data["event_start_time"] = eventDate.toISOString().slice(0,11) + timeStart.toISOString().slice(12)
-          } 
-          else {
-            data["event_start_time"] = route.params.currentDate.slice(0,11) + timeStart.toISOString().slice(12)
-          }
-        }
-
-        if (timeEnd) {
-          if (eventDate !== null) {
-            data["event_end_time"] = eventDate.toISOString().slice(0,11) + timeEnd.toISOString().slice(12)
-          } 
-          else {
-            data["event_end_time"] = route.params.currentDate.slice(0,11) + timeEnd.toISOString().slice(12)
-          }
-        }
-
-        console.log(data)
-      
-        const options = {
-          headers: { Authorization: `JWT ${token}` }
-        };
-
-        await axios.put(API + API_EVENTS + "/" + route.params.eventId.toString(), data, options)
-
-        navigation.goBack()
-      }
-
-      catch (error) {
-          console.log(error)
-      }
-  }
-
-
-
-
+  
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+
 
       <View style={[commonStyles.container,
                     darkLightMode && { backgroundColor: "#333", color: "#eee" },
                   ]}>
+
         <View style = {styles.innerContainer}>
-          <Text style = {[styles.text, darkLightMode ? stylesDark.text : stylesLight.text]}>Event Name</Text>
+          <Text style = {[styles.text, darkLightMode ? stylesDark.text : stylesLight.text]}>Guest Name</Text>
           <TextInput
                 style = {[styles.input,darkLightMode ? stylesDark.input : stylesLight.input]}
                 autoCapitalize="none"
                 autoCorrect={false}
-                value={eventName}
-                onChangeText={(input) => setEventName(input)}
+                value={guestName}
+                onChangeText={(input) => setGuestName(input)}
                 />
         </View>
 
         <View style = {styles.innerContainer}>
-          <Text style = {[styles.text, darkLightMode ? stylesDark.text : stylesLight.text]}>Date</Text>
+          <Text style = {[styles.text, darkLightMode ? stylesDark.text : stylesLight.text]}>Number of Guests</Text>
           <TextInput
-                ref = { dateInputRef }
                 style = {[styles.input,darkLightMode ? stylesDark.input : stylesLight.input]}
                 autoCapitalize="none"
                 autoCorrect={false}
-                value={eventDate? format(eventDate, 'dd/MM/yyyy') : null}
-                editable={false}
-                onTouchStart={() => {Keyboard.dismiss(); setDatePickerVisibility(true)}}
-                showSoftInputOnFocus={false}
-          />
-          <DateTimePickerModal
-            isVisible = {datePickerVisibility}
-            mode="date"
-            onConfirm={setNewEventDate}
-            onCancel={() => {setDatePickerVisibility(false)}}
-            minimumDate = {new Date()}
-            date = {new Date()}
-        />
+                value={noOfGuests}
+                onChangeText={(input) => setNoOfGuests(input)}
+                keyboardType="numeric"
+                />
         </View>
 
         <View style = {styles.innerContainer}>
@@ -239,8 +215,8 @@ export default function CreateScreen({navigation, route}) {
         </View>
 
         <View style = {styles.innerContainer2}>
-          <TouchableOpacity style={styles.createButton} onPress = {eventStatus === "Create New Event"? () => addNew(navigation): () => editExisting(navigation)}>
-                        <Text style={styles.createButtonText}>{eventStatus}</Text>
+          <TouchableOpacity style={styles.createButton} onPress = {guestStatus === "Create New Guest"? () => addNew(navigation, route): () => editExisting(navigation, route)}>
+                        <Text style={styles.createButtonText}>{guestStatus}</Text>
           </TouchableOpacity> 
         </View>
 
@@ -252,6 +228,7 @@ export default function CreateScreen({navigation, route}) {
     </TouchableWithoutFeedback>
   );
 }
+
 
 const styles = StyleSheet.create({
 

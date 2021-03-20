@@ -1,13 +1,6 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { commonStyles } from "../styles/commonStyles";
+import EventScreen from "../components/EventScreen";
 
-export default function PastScreen({ navigation }) {
-  return (
-    <View style={commonStyles.container}>
-      <Text>Past Events</Text>
-    </View>
-  );
+export default function UpcomingScreen({navigation}) {
+    return <EventScreen navigation={navigation} eventStatus={"past"} />;
 }
-
-const styles = StyleSheet.create({});

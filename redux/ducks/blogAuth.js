@@ -13,7 +13,8 @@ export function signOutAction()
 
 const initialState = 
 {
-    signedIn: false
+    signedIn: false,
+    token: ""
 };
 
 export default function blogAuthReducer(state = initialState, action)
@@ -23,7 +24,7 @@ export default function blogAuthReducer(state = initialState, action)
         case SIGN_IN:
             return {...state, signedIn: true};
         case SIGN_OUT:
-            return {...state, signedIn: false};
+            return {...state, signedIn: false, token: ""};
         default:
             return state;
     }

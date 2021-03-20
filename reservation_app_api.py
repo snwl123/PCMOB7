@@ -1,4 +1,4 @@
-# A very simple Flask Hello World app for you to get started with...
+# API for a basic reservation app
 
 from flask import Flask, request, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy

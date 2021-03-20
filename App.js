@@ -1,14 +1,15 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TouchableOpacity } from "react-native";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import CreateScreen from "./screens/CreateScreen";
-// import IndexScreen from "./screens/IndexScreen";
 import UpcomingScreen from "./screens/UpcomingScreen";
+import GuestInfoScreen from "./screens/GuestInfoScreen";
+import CreateGuest from "./screens/CreateGuest";
 import CurrentScreen from "./screens/CurrentScreen";
 import PastScreen from "./screens/PastScreen";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -101,18 +102,6 @@ function App()
 
     }
   }
-
-  // function UpcomingScreenStack()
-  // {
-  //   return (
-  //     <Stack.Navigator mode="modal" >
-  //       <Stack.Screen component={UpcomingScreen} name = "Upcoming Events"/>
-  //       <Stack.Screen component={CreateScreen} name = "Create Events"/>
-  //     </Stack.Navigator>
-  //   );
-  // }
-
-
   
   //logged in screens
   function loggedIn()
@@ -161,6 +150,15 @@ function App()
   }
 
 
+  function GuestScreen() {
+    return (
+      <Stack.Navigator mode="modal">
+              <Stack.Screen component={GuestInfoScreen} name="Guest Information"/>
+              <Stack.Screen component={CreateGuest} name="Create Guest"/>
+      </Stack.Navigator>
+    );
+  }
+  
 
   //sign in & sign up screens
   return (
@@ -171,6 +169,7 @@ function App()
             <Stack.Screen component={loggedIn} name="Current Events" options={({route, navigation}) => ({ headerTitle: getHeaderTitle(route),
                                                                                                           headerRight: getRightHeaderButton(route, navigation)})}/>
             <Stack.Screen component={CreateScreen} name="Create Event"/>
+            <Stack.Screen component={GuestScreen} name="Guest Screen" options={{ headerShown: false }}/>
           </Stack.Navigator>
         )
         :
