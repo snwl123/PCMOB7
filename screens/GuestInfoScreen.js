@@ -115,7 +115,7 @@ export default function GuestInfoScreen({ navigation, route }) {
   return (
       <View style={commonStyles.container}>
         {guests === []?
-        <Text>No Guest Information</Text>
+        <Text style={styles.noGuestInfoText}>No Guest Information</Text>
         :
        <View style={styles.container}>
           <FlatList data = {guests} renderItem = {guestInfo} keyExtractor = {(item) => (item.guest_id).toString()}/>
@@ -128,6 +128,12 @@ export default function GuestInfoScreen({ navigation, route }) {
 const styles = StyleSheet.create({
 
   container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    textAlign: "left"
+  },
+
+  noGuestInfoText: {
     flex: 1,
     backgroundColor: "#fff",
     textAlign: "left"
