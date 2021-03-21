@@ -7,7 +7,7 @@ import CreateScreen from "./screens/CreateScreen";
 import UpcomingScreen from "./screens/UpcomingScreen";
 import GuestInfoScreen from "./screens/GuestInfoScreen";
 import CreateGuest from "./screens/CreateGuest";
-import CurrentScreen from "./screens/CurrentScreen";
+import EditScreen from "./screens/EditScreen";
 import PastScreen from "./screens/PastScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -21,6 +21,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 
+const API = "https:/weilin.pythonanywhere.com";
+const API_WHOAMI = "/whoami";
+
 export default function AppWrapper() {
   return (
     <Provider store={store}>
@@ -31,12 +34,10 @@ export default function AppWrapper() {
 
 function App()
 {
-
   const [loading,setLoading] = useState(false);
+  const [userId, setUserId] = useState(0)
   const dispatch = useDispatch();
   const signedIn = useSelector((state) => state.auth.signedIn); // before: [] = useState()
-
-
 
   async function loadToken() {
     const token = await AsyncStorage.getItem("token");
@@ -46,16 +47,15 @@ function App()
     setLoading(false);
   }
 
-  
 
   useEffect(() =>
   {
     loadToken();
+
   }, []);
 
+
   const Tab = createBottomTabNavigator();
-
-
 
   function getHeaderTitle(route) {
     // If the focused route is not found, we need to assume it's the initial screen
@@ -74,34 +74,6 @@ function App()
         return 'Profile';
     }
   }
-
-  function getRightHeaderButton(route, navigation)
-  {
-    const routeName = getFocusedRouteNameFromRoute(route);
-    const navigate = navigation.navigate;
-
-    switch (routeName)
-    {
-      case 'Upcoming':
-        return (
-                  () =>
-                        (
-                          <TouchableOpacity onPress = {() => navigate("Create Event")}>
-                            <Ionicons
-                              name="add-outline"
-                              size={25}
-                              style={{
-                                      color: "#222",
-                                      marginRight: 20,
-                                    }}
-                            />
-                          </TouchableOpacity>
-                        )
-                  )
-
-
-    }
-  }
   
   //logged in screens
   function loggedIn()
@@ -111,9 +83,9 @@ function App()
                                                          tabBarIcon: ({ focused, color, size }) =>
                                                          {
                                                             let iconName;
-                                                            if (route.name === 'Current')
+                                                            if (route.name === 'Create Event')
                                                             {
-                                                              iconName = focused ? 'flash' : "flash-outline";
+                                                              iconName = focused ? "add-circle" : "add-circle-outline";
                                                             }
                                                             else if (route.name === 'Upcoming')
                                                             {
@@ -140,9 +112,9 @@ function App()
                                             fontWeight: "600",
                                           },
                                         }}>
-            <Tab.Screen component={CurrentScreen} name="Current"/>
             <Tab.Screen component={UpcomingScreen} name="Upcoming"/>
             <Tab.Screen component={PastScreen} name="Past" />
+            <Tab.Screen component={CreateScreen} name="Create Event"/>
             <Tab.Screen component={ProfileScreen} name="Profile"/>
         </Tab.Navigator>
     );
@@ -166,10 +138,9 @@ function App()
         {signedIn ?
         (
           <Stack.Navigator mode="modal">
-            <Stack.Screen component={loggedIn} name="Current Events" options={({route, navigation}) => ({ headerTitle: getHeaderTitle(route),
-                                                                                                          headerRight: getRightHeaderButton(route, navigation)})}/>
-            <Stack.Screen component={CreateScreen} name="Create Event"/>
+            <Stack.Screen component={loggedIn} name="Current Events" options={({route, navigation}) => ({ headerTitle: getHeaderTitle(route) })}/>
             <Stack.Screen component={GuestScreen} name="Guest Screen" options={{ headerShown: false }}/>
+            <Tab.Screen component={EditScreen} name="Edit Event"/>
           </Stack.Navigator>
         )
         :

@@ -7,36 +7,51 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const API = "https:/weilin.pythonanywhere.com";
+const API_WHOAMI = "/whoami";
 const API_EVENTS = "/events";
 
 export default function EventScreen({navigation, eventStatus}) {
 
   const [events, setEvents] = useState([])
   const [status, setStatus] = useState(0)
-
+  const [userId, setUserId] = useState(0)
+ 
   useEffect(() =>
   {
     
-      if (eventStatus == "upcoming") {
-          setStatus(1)
-      }
-      else if (eventStatus == "past") {
-          setStatus(-1)
-      }
-      else {
-          setStatus(0)
-      }
+    if (eventStatus == "upcoming") {
+        setStatus(1)
+    }
+    else if (eventStatus == "past") {
+        setStatus(-1)
+    }
+    else {
+        setStatus(0)
+    }
     
   },[]);
   
     useEffect(() =>
     {
-        
+
         (async() => {
 
           const token = await AsyncStorage.getItem("token");
+
+          try {
+            const response = await axios.get(API + API_WHOAMI,
+            {
+                headers: { Authorization: `JWT ${token}` },
+            });
+    
+            setUserId(response.data.id);
+          }
+          catch (error) {
+              console.log(error)
+          }
+
           try { 
-            const response = await axios.get(API + API_EVENTS,
+            const response = await axios.get(API + "/user/" + userId.toString() + API_EVENTS,
             {
                 headers: { Authorization: `JWT ${token}` },
             });
@@ -47,6 +62,7 @@ export default function EventScreen({navigation, eventStatus}) {
           catch (error) {
             console.log(error)
           }
+
         })()
       
     },[events]);
@@ -72,7 +88,7 @@ export default function EventScreen({navigation, eventStatus}) {
     }
 
     function editEvent(eventId, currentDate) {
-      navigation.navigate("Create Event", {eventId, currentDate})
+      navigation.navigate("Edit Event", {eventId, currentDate})
     }
 
     function eventInfo( {item} )
@@ -88,7 +104,7 @@ export default function EventScreen({navigation, eventStatus}) {
               </TouchableOpacity >
               <View  style={styles.eventFeatures}>
               { status === 1?
-                <TouchableOpacity onPress={() => editEvent(item.event_id, new Date(item.event_start_time).toISOString())}>
+                <TouchableOpacity onPress={() => editEvent(item.event_id, new Date(item.event_start_time).toISOString(), userId)}>
                   <Ionicons
                   name="create-outline"
                   size={25}

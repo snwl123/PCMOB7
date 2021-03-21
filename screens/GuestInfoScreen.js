@@ -60,7 +60,7 @@ export default function GuestInfoScreen({ navigation, route }) {
 
         })()
       
-    },[guests]);
+    });
 
     function editGuest(guestId){
       navigation.navigate("Create Guest", {guestId, eventId})
