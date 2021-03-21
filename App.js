@@ -66,8 +66,8 @@ function App()
     switch (routeName) {
       case 'Upcoming':
         return 'Upcoming Events';
-      case 'Current':
-        return 'Current Events';
+      case 'Create Event':
+        return 'Create Event';
       case 'Past':
         return 'Past Events';
       case 'Profile':
@@ -138,7 +138,7 @@ function App()
         {signedIn ?
         (
           <Stack.Navigator mode="modal">
-            <Stack.Screen component={loggedIn} name="Current Events" options={({route, navigation}) => ({ headerTitle: getHeaderTitle(route) })}/>
+            <Stack.Screen component={loggedIn} name="Upcoming Events" options={({route, navigation}) => ({ headerTitle: getHeaderTitle(route) })}/>
             <Stack.Screen component={GuestScreen} name="Guest Screen" options={{ headerShown: false }}/>
             <Tab.Screen component={EditScreen} name="Edit Event"/>
           </Stack.Navigator>
