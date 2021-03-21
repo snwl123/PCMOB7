@@ -134,7 +134,7 @@ export default function EventScreen({navigation, eventStatus}) {
 
     return (
       <View style={styles.container}>
-        <FlatList data = {events} renderItem = {eventInfo} keyExtractor = {(item) => (item.event_id).toString()}/>
+        <FlatList data = {events.sort((a, b) => new Date(a.event_start_time) - new Date(b.event_start_time))} renderItem = {eventInfo} keyExtractor = {(item) => (item.event_id).toString()}/>
       </View>
     );
 }
