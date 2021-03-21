@@ -10,7 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function GuestInfoScreen({ navigation, route }) {
 
   const [eventId, setEventId] = useState(route.params.event_id)
-  const [guests, setGuests] = useState([])
+  const [guests, setGuests] = useState(null)
   const [guestStatus, setGuestStatus] = useState(false)
 
   const API = "https:/weilin.pythonanywhere.com";
@@ -48,7 +48,10 @@ export default function GuestInfoScreen({ navigation, route }) {
             const response = await axios.get(API + API_EVENTS + "/" + eventId.toString() + "/" + API_GUESTS, {
                 headers: { Authorization: `JWT ${token}` },
             });
-            setGuests(response.data);
+
+            if (response.data.length !== 0) {
+              setGuests(response.data)
+            }
           }
 
           catch (error) {
@@ -80,9 +83,11 @@ export default function GuestInfoScreen({ navigation, route }) {
     function guestInfo({item}) {
       return (
         <View style={styles.eventInfoContainer}>
-          <Text style={styles.listText1}>{item.guest_name}</Text>
-          <Text style={styles.listText2}>{item.no_of_people}</Text>
-          <Text style={styles.listText2}>{new Date(item.guest_start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - {new Date(item.guest_end_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</Text>
+          <View>
+            <Text style={styles.listText1}>{item.guest_name}</Text>
+            <Text style={styles.listText2}>{item.no_of_people}</Text>
+            <Text style={styles.listText2}>{new Date(item.guest_start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - {new Date(item.guest_end_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</Text>
+          </View>
           { guestStatus ?
           <View  style={styles.eventFeatures}>
             <TouchableOpacity onPress={() => editGuest(item.guest_id)}>
@@ -113,13 +118,13 @@ export default function GuestInfoScreen({ navigation, route }) {
 
 
   return (
-      <View style={commonStyles.container}>
-        {guests === []?
-        <Text style={styles.noGuestInfoText}>No Guest Information</Text>
-        :
-       <View style={styles.container}>
+      <View style={styles.container}>
+        {guests?
+        <View style={styles.listContainer}>
           <FlatList data = {guests} renderItem = {guestInfo} keyExtractor = {(item) => (item.guest_id).toString()}/>
-       </View>
+        </View>
+        :
+        <Text style={styles.noGuestInfoText}>No Guest Information</Text>
       }
       </View>
   );
@@ -129,22 +134,31 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
     backgroundColor: "#fff",
-    textAlign: "left"
+    alignItems: "center",
+  },
+
+  listContainer: {
+    flex: 1,
+    display: "flex",
+    backgroundColor: "#fff"
   },
 
   noGuestInfoText: {
     flex: 1,
     backgroundColor: "#fff",
-    textAlign: "left"
+    textAlign: "center"
   },
 
   eventInfoContainer:
     {
       display: "flex",
       flexDirection: "row",
+      justifyContent: "space-between",
       borderBottomColor: "#bbb",
-      justifyContent:"space-between",
       borderBottomWidth: 0.2,
       padding: 20
     },
